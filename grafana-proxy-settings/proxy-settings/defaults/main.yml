@@ -1,0 +1,2 @@
+grafana_domain: 172.21.11.147
+grafana_root_url: '%(protocol)s://%(domain)s:%(http_port)s/grafana/'

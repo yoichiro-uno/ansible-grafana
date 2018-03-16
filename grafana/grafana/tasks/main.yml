@@ -1,0 +1,42 @@
+---
+- name: Add gpg key for grafana
+  rpm_key:
+    key: "{{ item }}"
+  with_items:
+    - "https://packagecloud.io/gpg.key"
+    - "https://grafanarel.s3.amazonaws.com/RPM-GPG-KEY-grafana"
+
+- name: Add repository for grafana
+  yum_repository:
+    name: grafana
+    description: "grafana"
+    baseurl: 'https://packagecloud.io/grafana/stable/el/\$releasever/\$basearch'
+    enabled: yes
+    gpgcheck: yes
+
+- name: Install grafana
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - grafana
+    - initscripts
+    - fontconfig
+
+- name: grafana settings
+  lineinfile:
+    path: "/etc/grafana/grafana.ini"
+    state: present
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - {regexp: '^;protocol = http', line: 'protocol = {{ grafana_protocol }}'}
+    - {regexp: '^;http_port = 3000', line: 'http_port = {{ grafana_http_port }}'}
+    - {regexp: '^;logs = /var/log/grafana', line: 'logs = {{ grafana_log }}'}
+    - {regexp: '^;data = /var/lib/grafana', line: 'data = {{ grafana_data }}'}
+
+- name: start grafana
+  systemd:
+    name: grafana-server
+    state: started
+    enabled: yes

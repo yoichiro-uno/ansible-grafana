@@ -1,0 +1,6 @@
+- name: Set proxy settings for grafana
+  hosts: all
+  become: yes
+  roles:
+    - proxy-settings
+  

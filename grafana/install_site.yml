@@ -1,0 +1,6 @@
+- name: Create grafana Server
+  hosts: all
+  become: yes
+  roles:
+    - grafana
+  

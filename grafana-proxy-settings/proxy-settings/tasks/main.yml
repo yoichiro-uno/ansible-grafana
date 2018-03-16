@@ -1,0 +1,14 @@
+- name: grafana settings for Proxy usage
+  lineinfile:
+    path: "/etc/grafana/grafana.ini"
+    state: present
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - {regexp: '^;root_url = http://localhost:3000', line: 'root_url = {{ grafana_root_url }}'}
+    - {regexp: '^;domain = localhost', line: 'domain = {{ grafana_domain }}'}
+    
+- name: start grafana
+  systemd:
+    name: grafana-server
+    state: restarted
